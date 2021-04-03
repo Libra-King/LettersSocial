@@ -10,6 +10,7 @@ import Ad from './component/ad/Ad';
 import Navbar from './component/nav/navbar';
 import Welcome from './component/welcome/Welcome';
 import Post from './components/post/Post';
+import CreatePost from './components/post/Create';
 
 class App extends Component {
   constructor(props) {
@@ -57,6 +58,23 @@ class App extends Component {
     });
   }
 
+  createNewPos (post) {
+    return API.createPost(post).then(res => res.json()).then(newPost => {
+      this.setState(prevState => {
+        return {
+          posts: orderBy(prevState.posts.concat(newPost), 'date', 'desc')
+        };
+      });
+    }).catch(err => {
+      this.setState(() => ({ error: err }));
+    });
+    // this.setState(prevState => {
+    //   return {
+    //     posts: orderBy(prevState.posts.concat(newPost), 'date', 'desc')
+    //   };
+    // });
+  }
+
   render () {
     return (
       <div className="app">
@@ -68,6 +86,7 @@ class App extends Component {
         ) : (
           <div className="home">
             <Welcome />
+            <CreatePost onSubmit={this.createNewPos} />
             <div>
               {this.state.posts.length && (
                 <div className="posts">
